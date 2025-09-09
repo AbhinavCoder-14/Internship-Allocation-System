@@ -9,6 +9,8 @@ import { auth } from "@/lib/firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { signOut } from "firebase/auth";
 
+
+
 import HeroSection from "@/components/HeroSection";
 import ProblemSolutionSection from "@/components/ProblemSolutionSection";
 import AIDemo from "@/components/AIDemo";
