@@ -21,6 +21,7 @@ export default function LoginPage() {
     try {
       const res = await signInWithEmailAndPassword(email, password);
       console.log({ res });
+      console.log("Entered in login")
       setEmail("");
       setPassword("");
       router.push("/");
