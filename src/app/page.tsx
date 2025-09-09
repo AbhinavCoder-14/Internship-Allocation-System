@@ -1,9 +1,9 @@
+// src/app/page.tsx
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Divide, Target, Users } from "lucide-react";
-
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 import { auth } from "@/lib/firebaseConfig";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -15,14 +15,39 @@ import AIDemo from "@/components/AIDemo";
 import CuratedOpportunities from "@/components/CuratedOpportunities";
 
 export default function HomePage() {
-  const [user] = useAuthState(auth);
+  const [user, loading, error] = useAuthState(auth);
   const router = useRouter();
-  // const userSession = sessionStorage.getItem("user");
-  console.log({ user });
 
-  // if (!user) {
-  //   router.push("/login");
-  // }
+  // Handle authentication errors
+  useEffect(() => {
+    if (error) {
+      console.error('Authentication error:', error);
+    }
+  }, [error]);
+
+  // Show loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut(auth);
+      // Clear any session storage
+      if (typeof window !== 'undefined') {
+        sessionStorage.removeItem("user");
+      }
+    } catch (error) {
+      console.error('Sign out error:', error);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
@@ -43,13 +68,14 @@ export default function HomePage() {
                 </Link>
               </div>
             ) : (
-              <div className="signOut">
-                <Button
-                  onClick={() => {
-                    signOut(auth);
-                    sessionStorage.removeItem("user");
-                  }}
-                >
+              <div className="flex items-center space-x-4">
+                <span className="text-sm text-gray-600">
+                  Welcome, {user.email}
+                </span>
+                <Link href="/dashboard/student">
+                  <Button variant="outline">Dashboard</Button>
+                </Link>
+                <Button onClick={handleSignOut}>
                   Log Out
                 </Button>
               </div>

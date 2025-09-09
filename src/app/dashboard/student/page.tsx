@@ -1,5 +1,6 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,21 +19,77 @@ import {
   mockApplications,
   Internship,
 } from "@/lib/types";
-
-
-
-import Sidebar from "@/components/Sidebar"; // We will create this
-
+import Sidebar from "@/components/Sidebar";
 
 import { auth } from '@/lib/firebaseConfig';
 import { useAuthState } from 'react-firebase-hooks/auth';
 
-
 // Reusable Internship Card (local to this file or move to /components)
-
+const InternshipCard: React.FC<{ internship: Internship }> = ({
+  internship,
+}) => (
+  <Card className="min-w-[320px] flex-shrink-0 hover:shadow-lg transition-all duration-300 border-l-4 border-l-blue-500">
+    <CardContent className="p-6">
+      <div className="flex items-start justify-between mb-4">
+        <div className="flex items-center space-x-3">
+          <div className="text-3xl">{internship.logo}</div>
+          <div>
+            <h3 className="font-semibold text-lg text-gray-900">
+              {internship.role}
+            </h3>
+            <p className="text-gray-600 font-medium">{internship.company}</p>
+          </div>
+        </div>
+        <Badge className="bg-green-100 text-green-800 font-bold px-3 py-1">
+          {internship.matchScore}% Match
+        </Badge>
+      </div>
+      <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
+        <div className="flex items-center space-x-1">
+          <MapPin className="w-4 h-4" />
+          <span>{internship.location}</span>
+        </div>
+        <div className="flex items-center space-x-1">
+          <Clock className="w-4 h-4" />
+          <span>{internship.duration}</span>
+        </div>
+      </div>
+      <Button className="w-full bg-blue-600 hover:bg-blue-700">
+        View Details
+      </Button>
+    </CardContent>
+  </Card>
+);
 
 export default function StudentDashboard() {
   const [activeTab, setActiveTab] = useState("dashboard");
+  const [user, loading, error] = useAuthState(auth);
+  const router = useRouter();
+
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push("/login");
+    }
+  }, [user, loading, router]);
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Don't render if not authenticated (will redirect)
+  if (!user) {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-gray-50 flex">
       <Sidebar
@@ -45,7 +102,7 @@ export default function StudentDashboard() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold text-gray-900">
-                Welcome back, {}!
+                Welcome back, {user.email?.split('@')[0] || 'Student'}!
               </h1>
               <p className="text-gray-600">{mockUser.university}</p>
             </div>
@@ -109,12 +166,12 @@ export default function StudentDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="flex overflow-x-auto space-x-4 pb-4 -mx-6 px-6">
-                    {/* {mockInternships.map((internship) => (
+                    {mockInternships.map((internship) => (
                       <InternshipCard
                         key={internship.id}
                         internship={internship}
                       />
-                    ))} */}
+                    ))}
                   </div>
                 </CardContent>
               </Card>
