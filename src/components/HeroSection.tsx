@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight } from "lucide-react";
-import heroImage from "@/assets/hero-bg.jpg";
+import HeroImage from "@/assets/hero-bg.jpg";
 
 const HeroSection = () => {
   return (
@@ -8,7 +8,7 @@ const HeroSection = () => {
       Background
       <div className="absolute inset-0">
         <img 
-          src={heroImage.src}
+          src={HeroImage.src}
           alt="AI Technology Background" 
           className="w-full h-full object-cover opacity-30"
         />
