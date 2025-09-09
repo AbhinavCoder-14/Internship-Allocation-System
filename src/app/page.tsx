@@ -17,12 +17,12 @@ import CuratedOpportunities from "@/components/CuratedOpportunities";
 export default function HomePage() {
   const [user] = useAuthState(auth);
   const router = useRouter();
-  const userSession = sessionStorage.getItem("user");
+  // const userSession = sessionStorage.getItem("user");
   console.log({ user });
 
-  if (!user) {
-    router.push("/login");
-  }
+  // if (!user) {
+  //   router.push("/login");
+  // }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
