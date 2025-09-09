@@ -13,18 +13,19 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const [signInWithEmailAndPassword] = useSignInWithEmailAndPassword(auth);
+  const [signInWithEmailAndPassword, user, loading, error] = useSignInWithEmailAndPassword(auth);
 
   const router = useRouter();
 
-  const handelSignIn = async () => {
+  const handleSignIn = async () => {
     try {
       const res = await signInWithEmailAndPassword(email, password);
       console.log({ res });
-      console.log("Entered in login")
-      setEmail("");
-      setPassword("");
-      router.push("/");
+      if (res) {
+        setEmail("");
+        setPassword("");
+        router.push("/dashboard/student"); // or wherever you want to redirect
+      }
     } catch (e) {
       console.error(e);
     }
@@ -41,16 +42,35 @@ export default function LoginPage() {
           <p className="text-gray-600">Sign in to your account</p>
         </CardHeader>
         <CardContent className="space-y-4">
+          {error && (
+            <div className="text-red-500 text-sm text-center">
+              {error.message}
+            </div>
+          )}
           <div className="space-y-2">
             <label className="text-sm font-medium">Email</label>
-            <Input type="email" placeholder="Enter your email" />
+            <Input 
+              type="email" 
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
           </div>
           <div className="space-y-2">
             <label className="text-sm font-medium">Password</label>
-            <Input type="password" placeholder="Enter your password" />
+            <Input 
+              type="password" 
+              placeholder="Enter your password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
           </div>
-          <Button onClick={handelSignIn} className="w-full bg-blue-600 hover:bg-blue-700">
-            Sign In
+          <Button 
+            onClick={handleSignIn} 
+            className="w-full bg-blue-600 hover:bg-blue-700"
+            disabled={loading}
+          >
+            {loading ? "Signing In..." : "Sign In"}
           </Button>
           <div className="relative">
             <div className="absolute inset-0 flex items-center">

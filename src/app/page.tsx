@@ -14,6 +14,11 @@ import { signOut } from 'firebase/auth';
 
 
 
+import HeroSection from "@/components/HeroSection";
+import ProblemSolutionSection from "@/components/ProblemSolutionSection";
+import AIDemo from "@/components/AIDemo";
+import CuratedOpportunities from "@/components/CuratedOpportunities";
+
 
 
 export default function  HomePage() {
@@ -57,28 +62,18 @@ export default function  HomePage() {
           </div>
         </div>
       </header>
-      <section className="pt-20 pb-32 px-4">
-        <div className="max-w-7xl mx-auto text-center">
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Intelligent Internship Matching for <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">India's Future</span>
-          </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-10">
-            Connect talented students with India's top companies through AI-powered matching.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="/dashboard/student">
-              <Button size="lg" className="px-8 py-4 text-lg w-full sm:w-auto">
-                <Target className="w-6 h-6 mr-2" />Find My Internship
-              </Button>
-            </Link>
-            <Link href="/dashboard/recruiter">
-              <Button size="lg" variant="outline" className="px-8 py-4 text-lg w-full sm:w-auto">
-                <Users className="w-6 h-6 mr-2" />Hire Top Talent
-              </Button>
-            </Link>
-          </div>
+
+      <section className="px-4">
+        <div className="min-h-screen bg-background">
+
+          <HeroSection />
+          <ProblemSolutionSection />
+          <AIDemo />
+          <CuratedOpportunities />
         </div>
       </section>
+
+
     </div>
   );
 }
