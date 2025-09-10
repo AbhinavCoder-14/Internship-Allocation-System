@@ -242,7 +242,7 @@ export default function CompleteProfilePage() {
       // Prepare the data according to your API format
       const apiData = {
         profile_id: user.uid,
-        full_name: formData.full_name,
+        fullName: formData.full_name,
         age: Number(formData.age),
         course: formData.course,
         semester: Number(formData.semester),
@@ -269,11 +269,17 @@ export default function CompleteProfilePage() {
       // await submitProfile(apiData);
       // *
       // For now, simulate API call
+      const token = await auth.currentUser?.getIdToken();
+      if (!token) {
+      throw new Error("Not authenticated");
+    }
 
       const response = await fetch("/api/profile",{
         method:"POST",
-        headers: { "Content-Type": "application/json" },
-        body:JSON.stringify({apiData})
+        headers: { "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+         },
+        body:JSON.stringify(apiData)
       })
       const data = await response.json();
 
