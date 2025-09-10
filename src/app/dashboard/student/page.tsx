@@ -154,7 +154,12 @@ export default function StudentDashboard() {
                       </span>
                     </div>
                   </div>
-                  <Button className="w-full">Complete Your Profile</Button>
+                  <Button 
+                    className="w-full"
+                    onClick={() => router.push('/profile/complete')}
+                  >
+                    Complete Your Profile
+                  </Button>
                 </CardContent>
               </Card>
               <Card className="lg:col-span-2">
