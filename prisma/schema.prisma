@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+
+
+enum UserRole {
+  STUDENT
+  RECRUITER
+}
+
+enum MatchStatus {
+  RECOMMENDED     // AI recommended this match
+  APPLIED         // Student has actively applied
+  SHORTLISTED     // Recruiter has shortlisted the student
+  OFFER_EXTENDED  // Recruiter sent an offer
+  ACCEPTED        // Student accepted the offer
+  REJECTED        // Either party rejected
+}
+
+
+// --- CORE TABLES ---
+
+// The User model is the central point, linked to Firebase Auth.
+model User {
+  id          String   @id @default(cuid())
+  firebaseUid String   @unique // The link to Firebase Authentication
+  email       String   @unique
+  role        UserRole
+  createdAt   DateTime @default(now())
+
+  // Relationships
+  studentProfile StudentProfile?
+  recruiterProfile RecruiterProfile?
+  internshipsPosted Internship[]
+}
+
+// Stores detailed information for student users.
+model StudentProfile {
+  id                       String   @id @default(cuid())
+  user                     User     @relation(fields: [userId], references: [id])
+  userId                   String   @unique
+  fullName                 String
+  age                      Int
+  course                   String
+  semester                 Int
+  skills                   String[]
+  interests                String[] @default([])
+  projects                 String?
+  experienceMonths         Int?
+  preferredSectorDomains   String[] @default([])
+  preferredLocation        String?
+  availabilityMonths       Int?
+  resumeText               String?
+  // profileEmbedding      Vector?  // For pgvector extension to store AI embedding
+
+  // Relationships
+  matches Match[]
+}
+
+// Stores information for recruiter users.
+model RecruiterProfile {
+  id          String @id @default(cuid())
+  user        User   @relation(fields: [userId], references: [id])
+  userId      String @unique
+  fullName    String
+  companyName String
+  companyUrl  String?
+}
+
+// Stores internship postings created by recruiters.
+model Internship {
+  id              String   @id @default(cuid())
+  recruiter       User     @relation(fields: [recruiterId], references: [id])
+  recruiterId     String
+  role            String
+  companyName     String
+  location        String
+  description     String
+  requiredSkills  String[]
+  stipendK        Int? // Stored in thousands, e.g., 15 for ₹15,000
+  durationMonths  Int
+  // internshipEmbedding Vector? // For pgvector extension to store AI embedding
+  createdAt       DateTime @default(now())
+
+  // Relationships
+  matches Match[]
+}
+
+// This is the most important table: it stores the pre-calculated AI matches.
+model Match {
+  id            String      @id @default(cuid())
+  student       StudentProfile @relation(fields: [studentId], references: [id])
+  studentId     String
+  internship    Internship  @relation(fields: [internshipId], references: [id])
+  internshipId  String
+  matchScore    Float       // The score from your AI model (e.g., 0.95)
+  aiReasoning   String?     // The explanation from the Gemini API
+  status        MatchStatus @default(RECOMMENDED)
+  createdAt     DateTime    @default(now())
+
+  @@unique([studentId, internshipId]) // Ensures a student can't be matched to the same internship twice
+}
+

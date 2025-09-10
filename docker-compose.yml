@@ -1,0 +1,22 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15 # Using a specific version is good practice
+    restart: always
+    container_name: prisma_postgres_db
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: mydatabase
+    ports:
+      # Exposes the container's port 5432 to your local machine's port 5432
+      - "5432:5432"
+    volumes:
+      # This persists the database data on your local machine
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
