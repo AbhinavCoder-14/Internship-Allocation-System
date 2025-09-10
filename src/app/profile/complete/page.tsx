@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+
+import axios from 'axios';
 import { 
   User, 
   BookOpen, 
@@ -265,9 +267,21 @@ export default function CompleteProfilePage() {
       
       // Here you would send the data to your API
       // await submitProfile(apiData);
-      
+      // *
       // For now, simulate API call
-      await new Promise(resolve => setTimeout(resolve, 2000));
+
+      const response = await fetch("/api/profile",{
+        method:"POST",
+        headers: { "Content-Type": "application/json" },
+        body:JSON.stringify({apiData})
+      })
+      const data = await response.json();
+
+      console.log("API Response:", data);
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch weather data");
+      }
+      // await new Promise(resolve => setTimeout(resolve, 2000));
       
       alert("Profile completed successfully!");
       router.push("/dashboard/student");
