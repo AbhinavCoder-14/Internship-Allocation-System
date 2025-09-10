@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
-import { PrismaClient } from '@prisma/client';
+// import { PrismaClient } from '@prisma/client';
+import {prisma} from "@/lib/db"
+// import { PrismaClient } from '@/generated/prisma';
 import { getAuth } from 'firebase-admin/auth';
 import { initFirebaseAdmin } from '@/lib/firebaseAdmin';
 
 // Initialize the Prisma client to interact with your database
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 // This function will handle POST requests sent to `/api/profile`
 export async function POST(request: Request) {
